@@ -40,6 +40,7 @@ public class Planificateur extends javax.swing.JFrame {
     JLabel Description;
     JTextField saisieTitre;
     JTextField saisieHeure;
+    JLabel MessageErreur;
     JTextArea saisieDescription;
 //mes container pour defenir l ecran
     Container contenu;
@@ -51,14 +52,14 @@ public class Planificateur extends javax.swing.JFrame {
     JButton btnSauvegarder;
     //vairable de list
     JList list;
-
+    
     DefaultListModel model;
 
     // End of variables declaration                
     public Planificateur() {
         initComposante();
     }
-
+    
     private void initComposante() {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUIFont(new FontUIResource(new Font("Courrier", 0, 20)));
@@ -91,7 +92,7 @@ public class Planificateur extends javax.swing.JFrame {
     private void afficheListTitre() {
         model = new DefaultListModel();
         list = new JList(model);
-
+        
         Integer indice = 0;
         ArrayList<Item> listeItem = new ArrayList<Item>();
         mesActivités.ParcoursInfixe(listeItem);
@@ -104,7 +105,7 @@ public class Planificateur extends javax.swing.JFrame {
             }
         });
         contenu.add(list, BorderLayout.WEST);
-
+        
     }
 
     /*
@@ -137,31 +138,33 @@ public class Planificateur extends javax.swing.JFrame {
             Filler1 = new JLabel("");
             DetailItem1.add(Filler1);
         }
-
+        
         titre = new JLabel("Titre :");
         DetailItem1.add(titre);
         saisieTitre = new JTextField("");
         DetailItem1.add(saisieTitre);
-
+        
         Heure = new JLabel("Heure :");
         DetailItem1.add(Heure);
         saisieHeure = new JTextField("");
         saisieHeure.setToolTipText("hh:mm (hh=0..23) (mm=0..59)");
         DetailItem1.add(saisieHeure);
-
+        
         Description = new JLabel("Description : ");
         DetailItem2.add(Description);
         saisieDescription = new JTextArea("");
         saisieDescription.setColumns(20);
         saisieDescription.setRows(10);
         DetailItem2.add(saisieDescription);
-
-        Filler2 = new JLabel("");
-        DetailItem3.add(Filler2);
+        
+        MessageErreur = new JLabel("");
+        MessageErreur.setVisible(false);
+        MessageErreur.setEnabled(false);
+        DetailItem3.add(MessageErreur);
         btnSauvegarder = new JButton("Sauvegarder");
         DetailItem3.add(DetailItem4);
         DetailItem4.add(btnSauvegarder, BorderLayout.EAST);
-
+        
         DetailItem.add(DetailItem1);
         DetailItem.add(DetailItem2);
         DetailItem.add(DetailItem3);
@@ -176,26 +179,30 @@ public class Planificateur extends javax.swing.JFrame {
      */
     private void jList1MouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
-        String itemSelectionné = (String) list.getSelectedValue();
-        System.out.println(itemSelectionné);
-
-        String heureSelectionText = itemSelectionné.substring(0, 5);
-        if (heureSelectionText != "_____") {
-            double heureSelection = Item.faitHeureDouble(heureSelectionText);
-            Item monItemCherché = new Item("", heureSelection, " ");
-            Item itemSelectioné = (Item) this.mesActivités.chercher(monItemCherché).getElement();
-            monItemCherché = null;
-            saisieDescription.setText(itemSelectioné.getDescription());
-            saisieHeure.setText(Item.faitHeureString(itemSelectioné.getHeure()));
-            saisieTitre.setText(itemSelectioné.getTitre());
-            pack();
-            saisieDescription.setEnabled(true);
-            saisieHeure.setEnabled(false);
-            saisieTitre.setEnabled(false);
-            btnSauvegarder.setEnabled(true);
-            btnSupprimer.setEnabled(true);
-            btnAjouter.setEnabled(false);
-            list.setEnabled(false);
+        try {
+            String itemSelectionné = (String) list.getSelectedValue();
+            System.out.println(itemSelectionné);
+            
+            String heureSelectionText = itemSelectionné.substring(0, 5);
+            if (heureSelectionText != "_____") {
+                double heureSelection = Item.faitHeureDouble(heureSelectionText);
+                Item monItemCherché = new Item("", heureSelection, " ");
+                Item itemSelectioné = (Item) this.mesActivités.chercher(monItemCherché).getElement();
+                monItemCherché = null;
+                saisieDescription.setText(itemSelectioné.getDescription());
+                saisieHeure.setText(Item.faitHeureString(itemSelectioné.getHeure()));
+                saisieTitre.setText(itemSelectioné.getTitre());
+                pack();
+                saisieDescription.setEnabled(true);
+                saisieHeure.setEnabled(false);
+                saisieTitre.setEnabled(false);
+                btnSauvegarder.setEnabled(true);
+                btnSupprimer.setEnabled(true);
+                btnAjouter.setEnabled(false);
+                list.setEnabled(false);
+            }
+        } catch (HeureException E) {
+//  cette erreur ne ce fera pas car heure de la liste sont valide
         }
     }
 
@@ -222,25 +229,30 @@ public class Planificateur extends javax.swing.JFrame {
      */
     private void effaceItem() {
         String heureSelectionText = saisieHeure.getText();
-             double heureSelection = Item.faitHeureDouble(heureSelectionText);
+        try {
+            double heureSelection = Item.faitHeureDouble(heureSelectionText);
+            
             Item monItemCherché = new Item("", heureSelection, " ");
             Item itemSupprimé = (Item) this.mesActivités.supprimer(monItemCherché).getElement();
             monItemCherché = null;
-        contenu.remove(list);
-        afficheListTitre();
-        System.out.println("item suprimé");
-        contenu.add(list, BorderLayout.WEST);
-        saisieDescription.setText("");
-        saisieHeure.setText("");
-        saisieTitre.setText("");
-        saisieDescription.setEnabled(false);
-        saisieHeure.setEnabled(false);
-        saisieTitre.setEnabled(false);
-        btnSauvegarder.setEnabled(false);
-        btnSupprimer.setEnabled(false);
-        btnAjouter.setEnabled(true);
-        list.setEnabled(true);
-        pack();
+            contenu.remove(list);
+            afficheListTitre();
+            System.out.println("item suprimé");
+            contenu.add(list, BorderLayout.WEST);
+            saisieDescription.setText("");
+            saisieHeure.setText("");
+            saisieTitre.setText("");
+            saisieDescription.setEnabled(false);
+            saisieHeure.setEnabled(false);
+            saisieTitre.setEnabled(false);
+            btnSauvegarder.setEnabled(false);
+            btnSupprimer.setEnabled(false);
+            btnAjouter.setEnabled(true);
+            list.setEnabled(true);
+            pack();
+        } catch (Exception E) {
+// cette erreur ne se produiera pas
+        }
     }
 
     /*
@@ -248,24 +260,33 @@ public class Planificateur extends javax.swing.JFrame {
     rebatie la liste de titre
      */
     private void faireItem() {
-        Item monItem = new Item(saisieTitre.getText(), Item.faitHeureDouble(saisieHeure.getText()), saisieDescription.getText());
-        this.mesActivités.inserer(monItem);
-        // important de retirer le jlist precedent car fonctionne pas !!!
-        contenu.remove(list);
-        afficheListTitre();
-        System.out.println("item ajouté");
-        contenu.add(list, BorderLayout.WEST);
-        saisieDescription.setText("");
-        saisieHeure.setText("");
-        saisieTitre.setText("");
-        btnSauvegarder.setEnabled(false);
-        btnSupprimer.setEnabled(false);
-        btnAjouter.setEnabled(true);
-        saisieDescription.setEnabled(false);
-        saisieHeure.setEnabled(false);
-        saisieTitre.setEnabled(false);
-        list.setEnabled(true);
-        pack();
+        try {
+            MessageErreur.setVisible(false);
+            Item monItem = new Item(saisieTitre.getText(), Item.faitHeureDouble(saisieHeure.getText()), saisieDescription.getText());
+            this.mesActivités.inserer(monItem);
+            // important de retirer le jlist precedent car fonctionne pas !!!
+            contenu.remove(list);
+            afficheListTitre();
+            System.out.println("item ajouté");
+            contenu.add(list, BorderLayout.WEST);
+            saisieDescription.setText("");
+            saisieHeure.setText("");
+            saisieTitre.setText("");
+            btnSauvegarder.setEnabled(false);
+            btnSupprimer.setEnabled(false);
+            btnAjouter.setEnabled(true);
+            saisieDescription.setEnabled(false);
+            saisieHeure.setEnabled(false);
+            saisieTitre.setEnabled(false);
+            list.setEnabled(true);
+            pack();
+        } catch (HeureException E) {
+            MessageErreur.setVisible(true);
+            MessageErreur.setText("Erreur sur le format de l'heure");
+            MessageErreur.setFont(new Font("Courier New", Font.ITALIC, 30));
+            MessageErreur.setOpaque(true);
+            MessageErreur.setForeground(Color.red);
+        }
     }
 
     /*
@@ -285,7 +306,7 @@ public class Planificateur extends javax.swing.JFrame {
         //Construction de la section detail
         action = new JPanel();
         action.setLayout(new GridLayout(1, 4));
-
+        
         btnAjouter = new JButton("Ajouter");
         btnSupprimer = new JButton("Supprimer");
         btnAjouter.addActionListener((action) -> ajoutItem());
@@ -296,7 +317,7 @@ public class Planificateur extends javax.swing.JFrame {
         action.add(btnSupprimer);
         Filler1 = new JLabel("");
         action.add(Filler1);
-
+        
         contenu.add(action, BorderLayout.NORTH);
     }
 
@@ -317,11 +338,11 @@ public class Planificateur extends javax.swing.JFrame {
             }
         }
     }
-
+    
     public static void main(String args[]) {
-
+        
         Planificateur ecran = new Planificateur();
 //        ecran.setVisible(true);
     }
-
+    
 }

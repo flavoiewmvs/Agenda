@@ -56,26 +56,35 @@ public class Item implements Comparable<Item> {
         return retour;
     }
 
-    public static double faitHeureDouble(String heureTexte) {
+    public static double faitHeureDouble(String heureTexte) throws HeureException {
         //throw heureValide ici
         int hh = 0;
         int mm = 0;
         int longueur = heureTexte.length();
-        hh = Integer.parseInt(heureTexte.split(":")[0]);
-        mm = Integer.parseInt(heureTexte.split(":")[1]);
-        Double retour = 0.0;
-        retour = (double) hh + ((double) mm / 60);
-        return retour;
+        try {
+            hh = Integer.parseInt(heureTexte.split(":")[0]);
+            mm = Integer.parseInt(heureTexte.split(":")[1]);
+            Double retour = 0.0;
+            retour = (double) hh + ((double) mm / 60);
+
+            if (hh < 0 || hh > 23 || mm < 1 || mm > 59) {
+                throw new HeureException("Heure Invalide");
+            }
+            return retour;
+        } catch (Exception E) {
+            throw new HeureException("Heure Invalide");
+        }
+
     }
 
     public static String faitHeureString(Double heure) {
 
         int hh = new Double(heure).intValue(); //recuperer la partie entiere
         Double mm = heure - (new Double(hh).doubleValue());
-        mm = mm*60;
+        mm = mm * 60;
 
-        String retour = (hh < 10 ? "0" : "")+hh+":";
-        retour +=  (mm < 10 ? "0" : "")+mm.intValue();
+        String retour = (hh < 10 ? "0" : "") + hh + ":";
+        retour += (mm < 10 ? "0" : "") + mm.intValue();
 
         return retour;
     }
