@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 
-
 import java.lang.Math;
 
 /**
@@ -49,7 +48,7 @@ public class Item implements Comparable<Item> {
         String retour = "";
         if (heure == 23.99) {
             retour = "___________________";
-         } else {
+        } else {
             retour = (hh < 10 ? "0" : "") + hh;
             retour += ":" + (mm < 10 ? "0" : "") + mm;
             retour += " " + titre.substring(0, longueur);
@@ -69,7 +68,19 @@ public class Item implements Comparable<Item> {
         return retour;
     }
 
-    public void setHeure(float heure) {
+    public static String faitHeureString(Double heure) {
+
+        int hh = new Double(heure).intValue(); //recuperer la partie entiere
+        Double mm = heure - (new Double(hh).doubleValue());
+        mm = mm*60;
+
+        String retour = (hh < 10 ? "0" : "")+hh+":";
+        retour +=  (mm < 10 ? "0" : "")+mm.intValue();
+
+        return retour;
+    }
+
+    public void setHeure(double heure) {
         this.heure = heure;
     }
 

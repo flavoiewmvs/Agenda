@@ -48,29 +48,35 @@ public class ABR_activités<E extends Comparable<E>> {
             _gauche = (_gauche == null) ? new ABR_activités<E>(element) : _gauche.inserer(element);
         } else if (direction > 0) {
             _droite = (_droite == null) ? new ABR_activités<E>(element) : _droite.inserer(element);
-        }
+        } else {
+           Item ItemCourant = (Item) _element;
+           Item ItemNouveau = (Item) element;
+           ItemCourant.setDescription(ItemNouveau.getDescription());
+//           ItemCourant.setHeure(ItemNouveau.getHeure());
+          }
         return this;
     }
 
     public ABR_activités<E> chercher(E element) {
         boolean pasLa = false;
+        ABR_activités ABRTrouvé=this;
         int direction = element.compareTo(_element);
         if (direction < 0) {
             if (_gauche == null) {
                 pasLa = true;
                 //lever exception ici
             } else {
-                _gauche = _gauche.chercher(element);
+                ABRTrouvé = _gauche.chercher(element);
             }
         } else if (direction > 0) {
             if (_droite == null) {
                 pasLa = true;
 //                lever exception ici 
             } else {
-                _droite = _droite.chercher(element);
+                ABRTrouvé = _droite.chercher(element);
             }
         }
-        return this;
+        return ABRTrouvé;
     }
 
     public int taille() {
