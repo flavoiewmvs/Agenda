@@ -67,7 +67,7 @@ public class Item implements Comparable<Item> {
             Double retour = 0.0;
             retour = (double) hh + ((double) mm / 60);
 
-            if (hh < 0 || hh > 23 || mm < 1 || mm > 59) {
+            if (hh < 0 || hh > 23 || mm < 0 || mm > 59) {
                 throw new HeureException("Heure Invalide");
             }
             return retour;
