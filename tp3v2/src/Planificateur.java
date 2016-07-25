@@ -144,7 +144,7 @@ public class Planificateur extends javax.swing.JFrame {
         saisieTitre = new JTextField("");
         DetailItem1.add(saisieTitre);
 
-        Heure = new JLabel("Heure :");
+        Heure = new JLabel("Heure (HH:MM):");
         DetailItem1.add(Heure);
         saisieHeure = new JTextField("");
         saisieHeure.setToolTipText("hh:mm (hh=0..23) (mm=0..59)");
@@ -284,7 +284,7 @@ public class Planificateur extends javax.swing.JFrame {
             pack();
         } catch (HeureException E) {
             MessageErreur.setVisible(true);
-            MessageErreur.setText("Erreur sur le format de l'heure");
+            MessageErreur.setText("Erreur format de l'heure (HH:MM)");
             MessageErreur.setFont(new Font("Courier New", Font.ITALIC, 30));
             MessageErreur.setOpaque(true);
             MessageErreur.setForeground(Color.red);
